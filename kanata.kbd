@@ -28,41 +28,53 @@
 )
 
 (defsrc
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
        1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  q    w    e    r    t    y    u    i    o    p    [    ]
   caps a    s    d    f    g    h    j    k    l    ;    '    \    ret
   lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
-  lctl lalt lmet           spc            rmet      ralt
+  fn   lctl lalt lmet           spc            rmet      ralt
 )
 
 (deflayer base
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
        XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   del
   tab  q    w    e    r    t    y    u    i    o    p    XX   XX
   esc  @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    XX   XX
   XX   \    z    x    c    v    b    n    m    ,    .    /         XX
-  XX   XX   @rsBspc        @lwr           @rsRet    XX
+  @fn   XX   XX   @rsBspc        @lwr           @rsRet    XX
 )
 
 (deflayer lower
+  _    _    _    _    _    _    _    _    _    _    _    _    _
        _    _    _    _    _    _    _    _    _    _    _    _    _
   _    S-1  S-2  S-3  S-4  S-5  S-6  S-7  S-8  -    =    _    _
   grv  @1   @2   @3   @4   5    6    @7   @8   @9   @0   _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _         _
-  _    _    bspc           spc            ret       _
+  _    _    _    bspc           spc            ret       _
 )
 
 (deflayer raise
+  _    _    _    _    _    _    _    _    _    _    _    _    _
        _    _    _    _    _    _    _    _    _    _    _    _    _
   _    f1   f2   f3   f4   f5   f6   S-9  S-0  f9   f10  f11  f12
   _    _    _    _    _    _    _    [    ]    _    _    _    _    ret
   _    _    _    _    _    _    _    S-[  S-]  _    _    _         rsft
-  _    _    bspc           spc            ret       _
+  _    _    _    bspc           spc            ret       _
+)
+
+(deflayermap (fn-layer)
+  f1  brdown
+  f2  brup
+  f11 voldwn
+  f12 volu
 )
 
 (defalias
   lwr    (tap-hold $tap-time $hold-time spc  (layer-toggle lower))
   rsRet  (tap-hold $tap-time $hold-time ret  (layer-toggle raise))
   rsBspc (tap-hold $tap-time $hold-time bspc (layer-toggle raise))
+  fn     (tap-hold $tap-time $hold-time fn   (layer-toggle fn-layer))
 
   a (tap-hold-release-keys $tap-time $hold-time a lctl $left-hand-keys)
   s (tap-hold-release-keys $tap-time $hold-time s lalt $left-hand-keys)
