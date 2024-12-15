@@ -40,13 +40,13 @@
   tab  q    w    e    r    t    y    u    i    o    p    [    ]
   esc  @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    \    ret
   lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
-  lctl @lwr lmet           spc            rmet @lwr
+  lctl lalt lmet           @lwr           rmet lalt
 )
 
 (deflayer lower
        1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  S-1  S-2  S-3  S-4  S-5  S-6  S-7  S-8  -    =    [    ]
-  grv  1    2    3    4    5    6    7    8    9    0    '    \    ret
+  grv  @1   @2   @3   @4   5    6    @7   @8   @9   @0   '    \    ret
   lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
   lctl lmet lalt           spc            ralt rmet
 )
@@ -60,7 +60,15 @@
   k (tap-hold-release-keys $tap-time $hold-time k rmet $right-hand-keys)
   l (tap-hold-release-keys $tap-time $hold-time l ralt $right-hand-keys)
   ; (tap-hold-release-keys $tap-time $hold-time ; rctl $right-hand-keys)
-  ;; add holt taps for lower layer numbers...
 
-  lwr (layer-toggle lower)
+  1 (tap-hold-release-keys $tap-time $hold-time 1 lctl $left-hand-keys)
+  2 (tap-hold-release-keys $tap-time $hold-time 2 lalt $left-hand-keys)
+  3 (tap-hold-release-keys $tap-time $hold-time 3 lmet $left-hand-keys)
+  4 (tap-hold-release-keys $tap-time $hold-time 4 lsft $left-hand-keys)
+  7 (tap-hold-release-keys $tap-time $hold-time 7 rsft $right-hand-keys)
+  8 (tap-hold-release-keys $tap-time $hold-time 8 rmet $right-hand-keys)
+  9 (tap-hold-release-keys $tap-time $hold-time 9 ralt $right-hand-keys)
+  0 (tap-hold-release-keys $tap-time $hold-time 0 rctl $right-hand-keys)
+
+  lwr (tap-hold $tap-time $hold-time spc (layer-toggle lower))
 )
