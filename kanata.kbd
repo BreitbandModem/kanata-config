@@ -36,7 +36,7 @@
 )
 
 (deflayer base
-       1    2    3    4    5    6    7    8    9    0    -    =    bspc
+       1    2    3    4    5    6    7    8    9    0    -    =    del
   tab  q    w    e    r    t    y    u    i    o    p    [    ]
   esc  @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    \    ret
   lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
@@ -44,19 +44,19 @@
 )
 
 (deflayer lower
-       1    2    3    4    5    6    7    8    9    0    -    =    bspc
-  tab  S-1  S-2  S-3  S-4  S-5  S-6  S-7  S-8  -    =    [    ]
-  grv  @1   @2   @3   @4   5    6    @7   @8   @9   @0   '    \    ret
-  lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
-  lctl lmet lalt           spc            ralt      rmet
+       _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    S-1  S-2  S-3  S-4  S-5  S-6  S-7  S-8  -    =    _    _
+  grv  @1   @2   @3   @4   5    6    @7   @8   @9   @0   _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _         _
+  _    _    bspc           spc            ret       _
 )
 
 (deflayer raise
-       _    _    _    _    _    _    _    _    _    _    _    _    bspc
-  tab  f1   f2   f3   f4   f5   f6   S-9  S-0  f9   f10  f11  f12
-  grv  _    _    _    _    _    _    [    ]    _    _    _    _    ret
-  lsft _    _    _    _    _    _    S-[  S-]  _    _    _         rsft
-  lctl lmet lalt           spc            ralt      rmet
+       _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    f1   f2   f3   f4   f5   f6   S-9  S-0  f9   f10  f11  f12
+  _    _    _    _    _    _    _    [    ]    _    _    _    _    ret
+  _    _    _    _    _    _    _    S-[  S-]  _    _    _         rsft
+  _    _    bspc           spc            ret       _
 )
 
 (defalias
