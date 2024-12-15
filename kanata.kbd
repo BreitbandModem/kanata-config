@@ -1,0 +1,66 @@
+;; Home row mods QWERTY example with more complexity.
+;; Some of the changes from the basic example:
+;; - when a home row mod activates tap, the home row mods are disabled
+;;   while continuing to type rapidly
+;; - tap-hold-release helps make the hold action more responsive
+;; - pressing another key on the same half of the keyboard
+;;   as the home row mod will activate an early tap action
+(defcfg
+  process-unmapped-keys yes
+)
+(defvar
+  ;; Note: consider using different time values for your different fingers.
+  ;; For example, your pinkies might be slower to release keys and index
+  ;; fingers faster.
+  tap-time 200
+  hold-time 150
+
+  left-hand-keys (
+    q w e r t
+    a s d f g
+    z x c v b
+  )
+  right-hand-keys (
+    y u i o p
+    h j k l ;
+    n m , . /
+  )
+)
+
+(defsrc
+       1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]
+  caps a    s    d    f    g    h    j    k    l    ;    '    \    ret
+  lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
+  lctl lalt lmet           spc            rmet ralt
+)
+
+(deflayer base
+       1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]
+  esc  @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    \    ret
+  lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
+  lctl @lwr lmet           spc            rmet @lwr
+)
+
+(deflayer lower
+       1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  S-1  S-2  S-3  S-4  S-5  S-6  S-7  S-8  -    =    [    ]
+  grv  1    2    3    4    5    6    7    8    9    0    '    \    ret
+  lsft grv  z    x    c    v    b    n    m    ,    .    /         rsft
+  lctl lmet lalt           spc            ralt rmet
+)
+
+(defalias
+  a (tap-hold-release-keys $tap-time $hold-time a lctl $left-hand-keys)
+  s (tap-hold-release-keys $tap-time $hold-time s lalt $left-hand-keys)
+  d (tap-hold-release-keys $tap-time $hold-time d lmet $left-hand-keys)
+  f (tap-hold-release-keys $tap-time $hold-time f lsft $left-hand-keys)
+  j (tap-hold-release-keys $tap-time $hold-time j rsft $right-hand-keys)
+  k (tap-hold-release-keys $tap-time $hold-time k rmet $right-hand-keys)
+  l (tap-hold-release-keys $tap-time $hold-time l ralt $right-hand-keys)
+  ; (tap-hold-release-keys $tap-time $hold-time ; rctl $right-hand-keys)
+  ;; add holt taps for lower layer numbers...
+
+  lwr (layer-toggle lower)
+)
