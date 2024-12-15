@@ -1,10 +1,3 @@
-;; Home row mods QWERTY example with more complexity.
-;; Some of the changes from the basic example:
-;; - when a home row mod activates tap, the home row mods are disabled
-;;   while continuing to type rapidly
-;; - tap-hold-release helps make the hold action more responsive
-;; - pressing another key on the same half of the keyboard
-;;   as the home row mod will activate an early tap action
 (defcfg
   process-unmapped-keys yes
 )
@@ -39,7 +32,7 @@
 (deflayer base
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
        XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   del
-  tab  q    w    e    r    t    y    u    i    o    p    XX   XX
+  tab  q    w    e    r    t    y    @u   i    @o   p    XX   XX
   esc  @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    XX   XX
   XX   \    z    x    c    v    b    n    m    ,    .    /         XX
   @fn   XX   XX   @rsBspc        @lwr           @rsRet    XX
@@ -58,7 +51,7 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _
        _    _    _    _    _    _    _    _    _    _    _    _    _
   _    f1   f2   f3   f4   f5   f6   S-9  S-0  f9   f10  f11  f12
-  _    _    _    _    _    _    _    [    ]    _    _    _    _    ret
+  _    @ae  _    _    _    _    _    @[   @]   _    _    _    _    ret
   _    _    _    _    _    _    _    S-[  S-]  _    _    _         rsft
   _    _    _    bspc           spc            ret       _
 )
@@ -85,12 +78,20 @@
   l (tap-hold-release-keys $tap-time $hold-time l ralt $right-hand-keys)
   ; (tap-hold-release-keys $tap-time $hold-time ; rctl $right-hand-keys)
 
-  1 (tap-hold-release-keys $tap-time $hold-time 1 lctl $left-hand-keys)
-  2 (tap-hold-release-keys $tap-time $hold-time 2 lalt $left-hand-keys)
-  3 (tap-hold-release-keys $tap-time $hold-time 3 lmet $left-hand-keys)
-  4 (tap-hold-release-keys $tap-time $hold-time 4 lsft $left-hand-keys)
-  7 (tap-hold-release-keys $tap-time $hold-time 7 rsft $right-hand-keys)
-  8 (tap-hold-release-keys $tap-time $hold-time 8 rmet $right-hand-keys)
-  9 (tap-hold-release-keys $tap-time $hold-time 9 ralt $right-hand-keys)
-  0 (tap-hold-release-keys $tap-time $hold-time 0 rctl $right-hand-keys)
+  1 (tap-hold $tap-time $hold-time 1 lctl)
+  2 (tap-hold $tap-time $hold-time 2 lalt)
+  3 (tap-hold $tap-time $hold-time 3 lmet)
+  4 (tap-hold $tap-time $hold-time 4 lsft)
+  7 (tap-hold $tap-time $hold-time 7 rsft)
+  8 (tap-hold $tap-time $hold-time 8 rmet)
+  9 (tap-hold $tap-time $hold-time 9 ralt)
+  0 (tap-hold $tap-time $hold-time 0 rctl)
+
+  [ (tap-hold $tap-time $hold-time [ rsft)
+  ] (tap-hold $tap-time $hold-time ] rmet)
+
+  umlaut (unshift lalt u) ;; when used in a macro, wait for 1ms before pressing the vocal
+  u (tap-hold $tap-time $hold-time u (macro @umlaut 1 u))
+  o (tap-hold $tap-time $hold-time o (macro @umlaut 1 o))
+  ae (macro @umlaut 1 a)
 )
