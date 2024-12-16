@@ -65,7 +65,7 @@
   f12 volu
 )
 
-(deflayermap (vim)
+(deflayermap (vim-normal)
   caps (multi caps (layer-switch base)) ;; cancel vim layer
 
   j @j ;; keep homerow mods to be able to shift -> todo: change to shift only?
@@ -75,21 +75,25 @@
   b  (multi lalt lft)
   w  (multi lalt rght)
   g (tap-dance 200 ((fork XX @G (rsft)) @gg))
+  c (tap-dance 200 ((fork XX @C (rsft)) @cc))
 
   ___ XX ;; ignore all other keys
 )
 
 (defalias
-  ;; vim
-  gg (multi lmet up)
+  ;; vim-normal
+  insert (layer-switch base)
+  gg M-up
   G  (unshift lmet down)
+  cc (multi (macro M-lft C-k caps) @insert)
+  C  (multi (unshift lctl k) caps @insert)
 
   ;; layer changes
   lwr    (tap-hold $tap-time $hold-time spc  (layer-toggle lower))
   rsRet  (tap-hold $tap-time $hold-time ret  (layer-toggle raise))
   rsBspc (tap-hold $tap-time $hold-time bspc (layer-toggle raise))
   fn     (tap-hold $tap-time $hold-time fn   (layer-toggle fn-layer))
-  escV (tap-dance 200 (esc (multi caps (layer-switch vim))))
+  escV (tap-dance 200 (esc (multi caps (layer-switch vim-normal))))
 
   ;; homerow mods
   a (tap-hold-release-keys $tap-time $hold-time a lctl $left-hand-keys)
