@@ -77,6 +77,7 @@
   ;; vim motions
   i (fork (multi caps @insert) @I (lsft))
   a (fork (multi caps @insert) @A (rsft))
+  o (fork @oi @Oi (lsft))
   b  A-lft
   w  A-rght
   g (tap-dance 200 ((fork XX @G (rsft)) @gg))
@@ -99,6 +100,8 @@
   insert (layer-switch base)
   I   (multi (unshift lctl a) caps @insert)
   A   (multi (unshift lctl e) caps @insert)
+  oi  (multi (macro M-rght ret) caps @insert)
+  Oi  (multi (macro (unshift lmet lft) ret (unshift up)) caps @insert)
   gg  M-up
   G   (unshift lmet down)
   cc  (multi (macro M-lft C-k caps) @insert)
