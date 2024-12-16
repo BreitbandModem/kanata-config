@@ -68,6 +68,7 @@
 (deflayermap (vim-normal)
   caps (multi caps (layer-switch base)) ;; cancel vim layer
 
+  ;; allow some keys to function
   up up
   down down
   lft lft
@@ -76,21 +77,32 @@
   f @f
 
   ;; vim motions
-  b  (multi lalt lft)
-  w  (multi lalt rght)
+  i (multi caps @insert)
+  b  A-lft
+  w  A-rght
   g (tap-dance 200 ((fork XX @G (rsft)) @gg))
-  c (tap-dance 200 ((fork XX @C (rsft)) @cc))
+  c (fork (one-shot-press 300 (layer-toggle vim-c)) @C (rsft))
 
+  ___ XX ;; ignore all other keys
+)
+(deflayermap (vim-c)
+  c @cc
+  i (one-shot-press 300 (layer-toggle vim-ci))
+  ___ XX ;; ignore all other keys
+)
+(deflayermap (vim-ci)
+  w @ciw
   ___ XX ;; ignore all other keys
 )
 
 (defalias
   ;; vim-normal
   insert (layer-switch base)
-  gg M-up
-  G  (unshift lmet down)
-  cc (multi (macro M-lft C-k caps) @insert)
-  C  (multi (unshift lctl k) caps @insert)
+  gg  M-up
+  G   (unshift lmet down)
+  cc  (multi (macro M-lft C-k caps) @insert)
+  C   (multi (unshift lctl k) caps @insert)
+  ciw (multi (macro S-A-lft bspc S-A-rght bspc) caps @insert)
 
   ;; layer changes
   lwr    (tap-hold $tap-time $hold-time spc  (layer-toggle lower))
