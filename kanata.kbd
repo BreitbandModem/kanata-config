@@ -68,6 +68,10 @@
 (deflayermap (vim-normal)
   caps (multi caps (layer-switch base)) ;; cancel vim layer
 
+  up up
+  down down
+  lft lft
+  rght rght
   j @j ;; keep homerow mods to be able to shift -> todo: change to shift only?
   f @f
 
