@@ -1,24 +1,38 @@
 (defcfg
   process-unmapped-keys yes
 )
-(defvar
-  ;; Note: consider using different time values for your different fingers.
-  ;; For example, your pinkies might be slower to release keys and index
-  ;; fingers faster.
-  tap-time 200
-  hold-time 150
 
-  left-hand-keys (
-    q w e r t
-    a s d f g
-    z x c v b
-  )
-  right-hand-keys (
-    y u i o p
-    h j k l ;
-    n m , . /
+;; Note: consider using different time values for your different fingers.
+;; For example, your pinkies might be slower to release keys and index
+;; fingers faster.
+(deftemplate homerow-l (tap-action hold-action)
+  ;;                tap-time hold-time                    tap-keys
+  (tap-hold-release-keys 200 150 $tap-action $hold-action (
+      q w e r t
+      a s d f g
+      z x c v b
+    )
   )
 )
+(deftemplate homerow-r (tap-action hold-action)
+  ;;                tap-time hold-time                    tap-keys
+  (tap-hold-release-keys 200 150 $tap-action $hold-action (
+      y u i o p
+      h j k l ;
+      n m , . /
+    )
+  )
+)
+(deftemplate tap-hold (tap-action hold-action)
+  ;;   tap-time hold-time
+  (tap-hold 200 150 $tap-action $hold-action)
+)
+(deftemplate tap-layer (tap-action layer)
+  ;;   tap-time hold-time
+  (tap-hold 200 150 $tap-action (layer-while-held $layer))
+)
+
+(defvar)
 
 (defsrc
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
@@ -33,7 +47,7 @@
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
        XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   del
   tab  q    w    e    r    t    y    @u   i    @o   p    XX   XX
-  @escV @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    XX   XX
+  @v-esc @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    XX   XX
   XX   \    z    x    c    v    b    n    m    ,    .    /         XX
   @fn  XX   XX   @rsBspc        @lwr           @rsRet    XX
 )
@@ -66,80 +80,95 @@
 (deflayermap (vim-normal)
   caps (multi caps (layer-switch base)) ;; cancel vim layer
 
-  ;; allow some keys to function
   up up
   down down
   lft lft
   rght rght
-  j @j ;; keep homerow mods to be able to shift -> todo: change to shift only?
-  f @f
+  h lft
+  j @v-j
+  k up
+  l rght
+  f (t! tap-hold XX lsft)
 
   ;; vim motions
-  i (fork (multi caps @insert) @I (lsft))
-  a (fork (multi caps @insert) @A (rsft))
-  o (fork @oi @Oi (lsft))
-  b  A-lft
-  w  A-rght
-  g (tap-dance 200 ((fork XX @G (rsft)) @gg))
-  c (fork (one-shot-press 300 (layer-toggle vim-c)) @C (rsft))
+  ;; todo: add motions 0,$
+  ;; todo: add yank operations
+  ;; todo: add d,dd,x
+  i (fork (multi caps @v-i) @v-I (lsft))
+  a (fork (multi caps @v-i) @v-A (rsft))
+  o (fork @v-o @v-O (lsft))
+  b  @v-b
+  w  @v-w
+  g (tap-dance 200 ((fork XX @v-G (rsft)) @v-gg))
+  c (fork (one-shot-press 300 (layer-toggle vim-c)) @v-C (rsft))
+  v (layer-switch vim-visual)
 
   ___ XX ;; ignore all other keys
 )
 (deflayermap (vim-c)
-  c @cc
+  c @v-cc
   i (one-shot-press 300 (layer-toggle vim-ci))
   ___ XX ;; ignore all other keys
 )
 (deflayermap (vim-ci)
-  w @ciw
+  w @v-ciw
+  ___ XX ;; ignore all other keys
+)
+(deflayermap (vim-visual)
+  caps (multi (layer-switch vim-normal) rght) ;; back to normal mode and deselect text
+  b (multi lsft @v-b)
+  w (multi lsft @v-w)
   ___ XX ;; ignore all other keys
 )
 
 (defalias
-  ;; vim-normal
-  insert (layer-switch base)
-  I   (multi (unshift lctl a) caps @insert)
-  A   (multi (unshift lctl e) caps @insert)
-  oi  (multi (macro M-rght ret) caps @insert)
-  Oi  (multi (macro (unshift lmet lft) ret (unshift up)) caps @insert)
-  gg  M-up
-  G   (unshift lmet down)
-  cc  (multi (macro M-lft C-k caps) @insert)
-  C   (multi (unshift lctl k) caps @insert)
-  ciw (multi (macro S-A-lft bspc S-A-rght bspc) caps @insert)
+  ;; vim
+  v-esc (tap-dance 200 (esc (multi caps (layer-switch vim-normal))))
+  v-i   (layer-switch base)
+  v-j   (t! homerow-r down lsft)
+  v-b   A-lft
+  v-w   A-rght
+  v-I   (multi (unshift lctl a) caps @v-i)
+  v-A   (multi (unshift lctl e) caps @v-i)
+  v-o   (multi (macro M-rght ret) caps @v-i)
+  v-O   (multi (macro (unshift lmet lft) ret (unshift up)) caps @v-i)
+  v-gg  M-up
+  v-G   (unshift lmet down)
+  v-cc  (multi (macro M-lft C-k caps) @v-i)
+  v-C   (multi (unshift lctl k) caps @v-i)
+  v-ciw (multi (macro S-A-lft bspc S-A-rght bspc) caps @v-i)
 
   ;; layer changes
-  lwr    (tap-hold $tap-time $hold-time spc  (layer-toggle lower))
-  rsRet  (tap-hold $tap-time $hold-time ret  (layer-toggle raise))
-  rsBspc (tap-hold $tap-time $hold-time bspc (layer-toggle raise))
-  fn     (tap-hold $tap-time $hold-time fn   (layer-toggle fn-layer))
-  escV (tap-dance 200 (esc (multi caps (layer-switch vim-normal))))
+  lwr    (t! tap-layer spc  lower)
+  rsRet  (t! tap-layer ret  raise)
+  rsBspc (t! tap-layer bspc raise)
+  fn     (t! tap-layer fn   fn-layer)
 
   ;; homerow mods
-  a (tap-hold-release-keys $tap-time $hold-time a lctl $left-hand-keys)
-  s (tap-hold-release-keys $tap-time $hold-time s lalt $left-hand-keys)
-  d (tap-hold-release-keys $tap-time $hold-time d lmet $left-hand-keys)
-  f (tap-hold-release-keys $tap-time $hold-time f lsft $left-hand-keys)
-  j (tap-hold-release-keys $tap-time $hold-time j rsft $right-hand-keys)
-  k (tap-hold-release-keys $tap-time $hold-time k rmet $right-hand-keys)
-  l (tap-hold-release-keys $tap-time $hold-time l ralt $right-hand-keys)
-  ; (tap-hold-release-keys $tap-time $hold-time ; rctl $right-hand-keys)
+  a (t! homerow-l a lalt)
+  s (t! homerow-l s lalt)
+  d (t! homerow-l d lmet)
+  f (t! homerow-l f lsft)
+  j (t! homerow-r j rsft)
+  k (t! homerow-r k rmet)
+  l (t! homerow-r l ralt)
+  ; (t! homerow-r ; rctl)
 
-  1 (tap-hold $tap-time $hold-time 1 lctl)
-  2 (tap-hold $tap-time $hold-time 2 lalt)
-  3 (tap-hold $tap-time $hold-time 3 lmet)
-  4 (tap-hold $tap-time $hold-time 4 lsft)
-  7 (tap-hold $tap-time $hold-time 7 rsft)
-  8 (tap-hold $tap-time $hold-time 8 rmet)
-  9 (tap-hold $tap-time $hold-time 9 ralt)
-  0 (tap-hold $tap-time $hold-time 0 rctl)
+  1 (t! tap-hold 1 lctl)
+  2 (t! tap-hold 2 lalt)
+  3 (t! tap-hold 3 lmet)
+  4 (t! tap-hold 4 lsft)
+  7 (t! tap-hold 7 rsft)
+  8 (t! tap-hold 8 rmet)
+  9 (t! tap-hold 9 ralt)
+  0 (t! tap-hold 0 rctl)
 
-  [ (tap-hold $tap-time $hold-time [ rsft)
-  ] (tap-hold $tap-time $hold-time ] rmet)
+  [ (t! tap-hold [ rsft)
+  ] (t! tap-hold ] rmet)
 
   ;; Umlauts
   umlaut (unshift lalt u) ;; when used in a macro, wait for 1ms before pressing the vocal
-  u (tap-hold $tap-time 300 u (macro @umlaut 1 u))
-  o (tap-hold $tap-time 300 o (macro @umlaut 1 o))
+  u (tap-hold 200 300 u (macro @umlaut 1 u))
+  o (tap-hold 200 300 o (macro @umlaut 1 o))
   ae (macro @umlaut 1 a)
 )
