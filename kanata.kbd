@@ -31,6 +31,15 @@
   ;;   tap-time hold-time
   (tap-hold 200 150 $tap-action (layer-while-held $layer))
 )
+(deftemplate action-i (action)
+  (multi $action @v-i)
+)
+(deftemplate action-shift (action shift-action)
+  (fork $action $shift-action (rsft lsft))
+)
+(deftemplate vim-seq (layer)
+  (one-shot-press 300 (layer-toggle $layer))
+)
 
 (defvar)
 
@@ -77,8 +86,12 @@
   f12 volu
 )
 
+;; vim motions
+;; todo: add motions 0,$
+;; todo: add yank operations
+;; todo: add d,dd,x
 (deflayermap (vim-normal)
-  caps (multi caps (layer-switch base)) ;; cancel vim layer
+  caps @v-i
 
   up up
   down down
@@ -90,53 +103,51 @@
   l rght
   f (t! tap-hold XX lsft)
 
-  ;; vim motions
-  ;; todo: add motions 0,$
-  ;; todo: add yank operations
-  ;; todo: add d,dd,x
-  i (fork (multi caps @v-i) @v-I (lsft))
-  a (fork (multi caps @v-i) @v-A (rsft))
-  o (fork @v-o @v-O (lsft))
+  i (t! action-shift @v-i @v-I)
+  a (t! action-shift @v-i @v-A)
+  o (t! action-shift @v-o @v-O)
   b  @v-b
   w  @v-w
-  g (tap-dance 200 ((fork XX @v-G (rsft)) @v-gg))
-  c (fork (one-shot-press 300 (layer-toggle vim-c)) @v-C (rsft))
+  g (tap-dance 200 ((t! action-shift XX @v-G) @v-gg))
+  c (t! action-shift @v-c @v-C)
   v (layer-switch vim-visual)
 
-  ___ XX ;; ignore all other keys
+  ___ XX
 )
 (deflayermap (vim-c)
   c @v-cc
-  i (one-shot-press 300 (layer-toggle vim-ci))
-  ___ XX ;; ignore all other keys
+  i @v-ci
+  ___ XX
 )
 (deflayermap (vim-ci)
   w @v-ciw
-  ___ XX ;; ignore all other keys
+  ___ XX
 )
 (deflayermap (vim-visual)
-  caps (multi (layer-switch vim-normal) rght) ;; back to normal mode and deselect text
+  caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
   b (multi lsft @v-b)
   w (multi lsft @v-w)
-  ___ XX ;; ignore all other keys
+  ___ XX
 )
 
 (defalias
   ;; vim
   v-esc (tap-dance 200 (esc (multi caps (layer-switch vim-normal))))
-  v-i   (layer-switch base)
+  v-i   (multi caps (layer-switch base))
   v-j   (t! homerow-r down lsft)
   v-b   A-lft
   v-w   A-rght
-  v-I   (multi (unshift lctl a) caps @v-i)
-  v-A   (multi (unshift lctl e) caps @v-i)
-  v-o   (multi (macro M-rght ret) caps @v-i)
-  v-O   (multi (macro (unshift lmet lft) ret (unshift up)) caps @v-i)
+  v-I   (t! action-i (unshift lctl a))
+  v-A   (t! action-i (unshift lctl e))
+  v-o   (t! action-i (macro M-rght ret))
+  v-O   (t! action-i (macro (unshift lmet lft) ret (unshift up)))
   v-gg  M-up
   v-G   (unshift lmet down)
-  v-cc  (multi (macro M-lft C-k caps) @v-i)
-  v-C   (multi (unshift lctl k) caps @v-i)
-  v-ciw (multi (macro S-A-lft bspc S-A-rght bspc) caps @v-i)
+  v-c   (t! vim-seq vim-c)
+  v-cc  (t! action-i (macro M-lft C-k))
+  v-C   (t! action-i (unshift lctl k))
+  v-ci  (t! vim-seq vim-ci)
+  v-ciw (t! action-i (macro S-A-lft bspc S-A-rght bspc))
 
   ;; layer changes
   lwr    (t! tap-layer spc  lower)
