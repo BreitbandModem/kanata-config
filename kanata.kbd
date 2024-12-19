@@ -95,7 +95,10 @@
 ;; todo: add d,dd,x
 (deflayermap (vim-normal)
   caps @v-i
+  f    (t! tap-hold XX lsft)
+  v    (layer-switch vim-visual)
 
+  ;; motions
   up   up
   down down
   lft  lft
@@ -104,16 +107,15 @@
   j    @v-j
   k    @v-k
   l    @v-l
-  f    (t! tap-hold XX lsft)
-
-  i    (t! action-shift @v-i @v-I)
-  a    (t! action-shift @v-i @v-A)
-  o    (t! action-shift @v-o @v-O)
   b    @v-b
   w    @v-w
   g    (tap-dance 200 ((t! action-shift XX @v-G) @v-gg))
+
+  ;; insert
+  i    (t! action-shift @v-i @v-I)
+  a    (t! action-shift @v-i @v-A)
+  o    (t! action-shift @v-o @v-O)
   c    (t! action-shift @v-c @v-C)
-  v    (layer-switch vim-visual)
 
   ___  XX
 )
@@ -128,6 +130,7 @@
 )
 (deflayermap (vim-visual)
   caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
+  f    (t! tap-hold XX lsft)
 
   up   (t! visual up)
   down (t! visual down)
@@ -139,8 +142,16 @@
   l    (t! visual @v-l)
   b    (t! visual @v-b)
   w    (t! visual @v-w)
+  g    (tap-dance 200 ((t! action-shift XX (multi lmet down)) (t! visual @v-gg)))
+
+  c    (multi @v-i bspc)
+  i    (t! vim-seq vim-vi)
 
   ___  XX
+)
+(deflayermap (vim-vi)
+  w   @v-viw
+  ___ XX
 )
 
 (defalias
@@ -164,6 +175,7 @@
   v-C   (t! action-i (unshift lctl k))
   v-ci  (t! vim-seq vim-ci)
   v-ciw (t! action-i (macro S-A-lft bspc S-A-rght bspc))
+  v-viw (t! visual (macro A-lft A-rght))
 
   ;; layer changes
   lwr    (t! tap-layer spc  lower)
