@@ -94,7 +94,6 @@
 
 ;; vim motions
 ;; todo: add yank operations
-;; todo: add d,dd
 ;; todo: add cw, cb
 (deflayermap (vim-normal)
   caps @n-i
@@ -117,6 +116,7 @@
   r    (t! action-ctl @n-$ @n-r) ;; aka $ on my lower layer
   u    @n-u
   x    (t! action-shift @n-x @n-X)
+  d    @n-d
 
   ;; insert
   i    (t! action-shift @n-i @n-I)
@@ -217,17 +217,20 @@
   n-G   (unshift lmet down)
   n-gg  M-up
   n-g   (tap-dance 200 ((t! action-shift XX @n-G) @n-gg))
-  n-c   (t! vim-seq vim-c)
-  n-cc  (t! action-i (macro @n-0 C-k))
-  n-C   (t! action-i (unshift lctl k))
-  n-ci  (t! vim-seq vim-ci)
-  n-ciw (t! action-i (macro @n-b S-A-rght bspc)) ;; aka @v-iw
-  n-u   (unmod rmet z)
-  n-r   (unmod rsft rmet z)
   n-x   del
   n-X   bspc
+  n-D   (unshift lctl k)
+  n-dd  (macro @n-0 @n-D)
+  n-d   (tap-dance 200 ((t! action-shift XX @n-D) @n-dd))
+  n-c   (t! vim-seq vim-c)
+  n-cc  (t! action-i @n-dd)
+  n-C   (t! action-i @n-D)
+  n-ci  (t! vim-seq vim-ci)
+  n-ciw (t! action-i (macro @n-b S-A-rght @n-X)) ;; aka @v-iw
+  n-u   (unmod rmet z)
+  n-r   (unmod rsft rmet z)
 
-  v-c   (t! action-i bspc)
+  v-c   (t! action-i @n-X)
   v-h   (t! visual @n-h)
   v-j   (t! visual @n-j)
   v-k   (t! visual @n-k)
