@@ -93,6 +93,8 @@
 ;; todo: add motions 0,$
 ;; todo: add yank operations
 ;; todo: add d,dd,x
+;; todo: add undo,redo
+;; todo: add cw, cb
 (deflayermap (vim-normal)
   caps @v-i
   f    (t! tap-hold XX lsft)
@@ -215,9 +217,9 @@
   v-cc  (t! action-i (macro @v-0 C-k))
   v-C   (t! action-i (unshift lctl k))
   v-ci  (t! vim-seq vim-ci)
-  v-ciw (t! action-i (macro S-A-lft bspc S-A-rght bspc))
+  v-ciw (t! action-i (multi lsft (macro @v-b bspc @v-w bspc)))
 
-  v-viw  (t! visual (macro A-lft A-rght))
+  v-viw  (t! visual (macro @v-b @v-w))
   v-v0   S-M-lft
   v-v$   S-M-rght
   v-vG   S-M-down
