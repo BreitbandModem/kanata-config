@@ -96,7 +96,7 @@
 (deflayermap (vim-normal)
   caps @v-i
   f    (t! tap-hold XX lsft)
-  v    (layer-switch vim-visual)
+  v    (t! action-shift (layer-switch vim-visual) (multi (macro (unshift lmet rght) S-M-lft) (layer-switch vim-VISUAL-init)))
 
   ;; motions
   up   up
@@ -110,6 +110,8 @@
   b    @v-b
   w    @v-w
   g    (tap-dance 200 ((t! action-shift XX @v-G) @v-gg))
+  ;    @v-0 ;; aka 0 on my layout w/ spc -> lower layer
+  r    @v-$ ;; aka $ on my layout w/ spc -> lower layer
 
   ;; insert
   i    (t! action-shift @v-i @v-I)
@@ -128,6 +130,7 @@
   w   @v-ciw
   ___ XX
 )
+
 (deflayermap (vim-visual)
   caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
   f    (t! tap-hold XX lsft)
@@ -143,6 +146,8 @@
   b    (t! visual @v-b)
   w    (t! visual @v-w)
   g    (tap-dance 200 ((t! action-shift XX (multi lmet down)) (t! visual @v-gg)))
+  ;    (t! visual @v-0) ;; aka 0 on my layout w/ spc -> lower layer
+  r    (t! visual @v-$) ;; aka $ on my layout w/ spc -> lower layer
 
   c    (multi @v-i bspc)
   i    (t! vim-seq vim-vi)
@@ -152,6 +157,34 @@
 (deflayermap (vim-vi)
   w   @v-viw
   ___ XX
+)
+
+(deflayermap (vim-VISUAL-init)
+  caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
+  f    (t! tap-hold XX lsft)
+
+  up   (multi (macro ((unshift lmet rght) S-M-lft S-A-up)) (layer-switch vim-VISUAL))
+  down (multi (macro ((unshift lmet lft) S-M-rght S-A-down)) (layer-switch vim-VISUAL))
+  j    (multi (macro ((unshift lmet lft) S-M-rght S-A-down)) (layer-switch vim-VISUAL))
+  k    (multi (macro ((unshift lmet rght) S-M-lft S-A-up)) (layer-switch vim-VISUAL))
+  g    (tap-dance 200 ((t! action-shift XX (multi lmet down)) (t! visual @v-gg)))
+
+  c    (multi @v-i bspc)
+
+  ___  XX
+)
+(deflayermap (vim-VISUAL)
+  caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
+  f    (t! tap-hold XX lsft)
+
+  up   S-A-up
+  down S-A-down
+  j    S-A-down
+  k    S-A-up
+  g    (tap-dance 200 ((t! action-shift XX (multi lmet down)) (t! visual @v-gg)))
+
+  c    (multi @v-i bspc)
+  ___  XX
 )
 
 (defalias
@@ -164,8 +197,10 @@
   v-l   rght
   v-b   A-lft
   v-w   A-rght
-  v-I   (t! action-i (unshift lctl a))
-  v-A   (t! action-i (unshift lctl e))
+  v-0   M-lft
+  v-$   M-rght
+  v-I   (t! action-i (unshift lmet lft))
+  v-A   (t! action-i (unshift lmet rght))
   v-o   (t! action-i (macro M-rght ret))
   v-O   (t! action-i (macro (unshift lmet lft) ret (unshift up)))
   v-gg  M-up
