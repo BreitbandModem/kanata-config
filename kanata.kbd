@@ -93,9 +93,8 @@
 )
 
 ;; vim motions
-;; todo: add motions 0,$
 ;; todo: add yank operations
-;; todo: add d,dd,x
+;; todo: add d,dd
 ;; todo: add cw, cb
 (deflayermap (vim-normal)
   caps @n-i
@@ -117,6 +116,7 @@
   ;    (t! tap-hold   @n-0 rctl) ;; aka 0 and ctl on my lower layer
   r    (t! action-ctl @n-$ @n-r) ;; aka $ on my lower layer
   u    @n-u
+  x    (t! action-shift @n-x @n-X)
 
   ;; insert
   i    (t! action-shift @n-i @n-I)
@@ -224,6 +224,8 @@
   n-ciw (t! action-i (macro @n-b S-A-rght bspc)) ;; aka @v-iw
   n-u   (unmod rmet z)
   n-r   (unmod rsft rmet z)
+  n-x   del
+  n-X   bspc
 
   v-c   (t! action-i bspc)
   v-h   (t! visual @n-h)
