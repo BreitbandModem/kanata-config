@@ -32,7 +32,7 @@
   (tap-hold 200 150 $tap-action (layer-while-held $layer))
 )
 (deftemplate action-i (action)
-  (multi $action @v-i)
+  (multi $action @n-i)
 )
 (deftemplate action-shift (action shift-action)
   (fork $action $shift-action (rsft lsft))
@@ -55,7 +55,7 @@
   fn   lctl lalt lmet           spc            rmet      ralt
 )
 
-(deflayer base
+(deflayer insert
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
        XX   XX   XX   XX   lrld XX   XX   XX   XX   XX   XX   XX   del
   tab  q    w    e    r    t    y    @u   i    @o   p    XX   XX
@@ -96,17 +96,53 @@
 ;; todo: add undo,redo
 ;; todo: add cw, cb
 (deflayermap (vim-normal)
-  caps @v-i
+  caps @n-i
   f    (t! tap-hold XX lsft)
-  v    @v-v
+  v    @n-v
 
   ;; motions
+  up   @n-k
+  down @n-j
+  lft  @n-h
+  rght @n-l
+  h    @n-h
+  j    (t! homerow-r @n-j lsft)
+  k    @n-k
+  l    @n-l
+  b    @n-b
+  w    @n-w
+  g    @n-g
+  ;    @n-0 ;; aka 0 on my layout w/ spc -> lower layer
+  r    @n-$ ;; aka $ on my layout w/ spc -> lower layer
+
+  ;; insert
+  i    (t! action-shift @n-i @n-I)
+  a    (t! action-shift @n-i @n-A)
+  o    (t! action-shift @n-o @n-O)
+  c    (t! action-shift @n-c @n-C)
+
+  ___  XX
+)
+(deflayermap (vim-c)
+  c   @n-cc
+  i   @n-ci
+  ___ XX
+)
+(deflayermap (vim-ci)
+  w   @n-ciw
+  ___ XX
+)
+
+(deflayermap (vim-visual)
+  caps @v-esc
+  f    (t! tap-hold XX lsft)
+
   up   @v-k
   down @v-j
   lft  @v-h
   rght @v-l
   h    @v-h
-  j    (t! homerow-r @v-j lsft)
+  j    @v-j
   k    @v-k
   l    @v-l
   b    @v-b
@@ -115,49 +151,13 @@
   ;    @v-0 ;; aka 0 on my layout w/ spc -> lower layer
   r    @v-$ ;; aka $ on my layout w/ spc -> lower layer
 
-  ;; insert
-  i    (t! action-shift @v-i @v-I)
-  a    (t! action-shift @v-i @v-A)
-  o    (t! action-shift @v-o @v-O)
-  c    (t! action-shift @v-c @v-C)
-
-  ___  XX
-)
-(deflayermap (vim-c)
-  c   @v-cc
-  i   @v-ci
-  ___ XX
-)
-(deflayermap (vim-ci)
-  w   @v-ciw
-  ___ XX
-)
-
-(deflayermap (vim-visual)
-  caps @v-vesc
-  f    (t! tap-hold XX lsft)
-
-  up   (t! visual @v-k)
-  down (t! visual @v-j)
-  lft  (t! visual @v-h)
-  rght (t! visual @v-l)
-  h    (t! visual @v-h)
-  j    (t! visual @v-j)
-  k    (t! visual @v-k)
-  l    (t! visual @v-l)
-  b    (t! visual @v-b)
-  w    (t! visual @v-w)
-  g    @v-vg
-  ;    @v-v0 ;; aka 0 on my layout w/ spc -> lower layer
-  r    @v-v$ ;; aka $ on my layout w/ spc -> lower layer
-
-  c    @v-vc
+  c    @v-c
   i    (t! vim-seq vim-vi)
 
   ___  XX
 )
 (deflayermap (vim-vi)
-  w   @v-viw
+  w   @v-iw
   ___ XX
 )
 
@@ -165,73 +165,81 @@
 ;; the cursor needs to be placed either at the end or the beginning of the current line.
 ;; The init layer is used to determine the direction of the selection based on th first motion.
 (deflayermap (vim-VISUAL-init)
-  caps @v-vesc ;; right click to deselect text
+  caps @V-esc
   f    (t! tap-hold XX lsft)
 
-  up   (multi @v-V-up   (layer-switch vim-VISUAL))
-  down (multi @v-V-down (layer-switch vim-VISUAL))
-  j    (multi @v-V-down (layer-switch vim-VISUAL))
-  k    (multi @v-V-up   (layer-switch vim-VISUAL))
-  g    @v-vg
+  up   (multi @V-Vk (layer-switch vim-VISUAL))
+  down (multi @V-Vj (layer-switch vim-VISUAL))
+  j    (multi @V-Vj (layer-switch vim-VISUAL))
+  k    (multi @V-Vk (layer-switch vim-VISUAL))
+  g    @V-g
 
-  c    @v-vc
+  c    @V-c
 
   ___  XX
 )
 (deflayermap (vim-VISUAL)
-  caps @v-vesc
+  caps @V-esc
   f    (t! tap-hold XX lsft)
 
-  up   @v-Vk
-  down @v-Vj
-  j    @v-Vj
-  k    @v-Vk
-  g    @v-vg
+  up   @V-k
+  down @V-j
+  j    @V-j
+  k    @V-k
+  g    @V-g
 
-  c    @v-vc
+  c    @V-c
 
   ___  XX
 )
 
 (defalias
-  ;; vim
+  ;; Vim aliases start with i, n, v, or V to indicate the mode (layer) they are designed for (insert, normal, visual, visual-line).
   i-esc (tap-dance 200 (esc (multi caps (layer-switch vim-normal))))
-  v-vesc (multi (layer-switch vim-normal) rght) ;; move right to deselect text
-  v-i   (multi caps (layer-switch base))
-  v-h   lft
-  v-j   down
-  v-k   up
-  v-l   rght
-  v-b   A-lft
-  v-w   A-rght
-  v-0   (unshift lmet lft)
-  v-$   (unshift lmet rght)
-  v-I   (t! action-i @v-0)
-  v-A   (t! action-i @v-$)
-  v-o   (t! action-i (macro @v-$ ret))
-  v-O   (t! action-i (macro @v-0 ret (unshift up)))
-  v-G   (unshift lmet down)
-  v-gg  M-up
-  v-g   (tap-dance 200 ((t! action-shift XX @v-G) @v-gg))
-  v-c   (t! vim-seq vim-c)
-  v-cc  (t! action-i (macro @v-0 C-k))
-  v-C   (t! action-i (unshift lctl k))
-  v-ci  (t! vim-seq vim-ci)
-  v-ciw (t! action-i (multi lsft (macro @v-b bspc @v-w bspc)))
+  v-esc (multi (layer-switch vim-normal) rght) ;; move right to deselect text
+  V-esc @v-esc
+  n-i   (multi caps (layer-switch insert))
+  n-h   lft
+  n-j   down
+  n-k   up
+  n-l   rght
+  n-b   A-lft
+  n-w   A-rght
+  n-0   (unshift lmet lft)
+  n-$   (unshift lmet rght)
+  n-I   (t! action-i @n-0)
+  n-A   (t! action-i @n-$)
+  n-o   (t! action-i (macro @n-$ ret))
+  n-O   (t! action-i (macro @n-0 ret (unshift up)))
+  n-G   (unshift lmet down)
+  n-gg  M-up
+  n-g   (tap-dance 200 ((t! action-shift XX @n-G) @n-gg))
+  n-c   (t! vim-seq vim-c)
+  n-cc  (t! action-i (macro @n-0 C-k))
+  n-C   (t! action-i (unshift lctl k))
+  n-ci  (t! vim-seq vim-ci)
+  n-ciw (t! action-i (macro @n-b S-A-rght bspc)) ;; aka @v-iw
 
-  v-viw  (t! visual (macro @v-b @v-w))
-  v-v0   S-M-lft
-  v-v$   S-M-rght
-  v-vG   S-M-down
-  v-vg   (tap-dance 200 ((t! action-shift XX @v-vG) (t! visual @v-gg)))
-  v-vc   (t! action-i bspc)
+  v-c   (t! action-i bspc)
+  v-h   (t! visual @n-h)
+  v-j   (t! visual @n-j)
+  v-k   (t! visual @n-k)
+  v-l   (t! visual @n-l)
+  v-b   (t! visual @n-b)
+  v-w   (t! visual @n-w)
+  v-iw  (macro @n-b S-A-rght) ;; aka @v-w
+  v-0   S-M-lft
+  v-$   S-M-rght
+  v-G   S-M-down
+  v-g   (tap-dance 200 ((t! action-shift XX @v-G) (t! visual @n-gg)))
+  n-v   (t! action-shift (layer-switch vim-visual) (multi (macro @n-0 @v-$) (layer-switch vim-VISUAL-init)))
 
-  v-V      (macro @v-$ @v-v0)
-  v-v      (t! action-shift (layer-switch vim-visual) (multi @v-V (layer-switch vim-VISUAL-init)))
-  v-Vk     S-A-up
-  v-V-up   (macro @v-$ @v-v0 @v-Vk)
-  v-Vj     S-A-down
-  v-V-down (macro @v-0 @v-v$ @v-Vj)
+  V-c   @v-c
+  V-k   S-A-up
+  V-Vk  (macro @n-$ @v-0 @V-k)
+  V-j   S-A-down
+  V-Vj  (macro @n-0 @v-$ @V-j)
+  V-g   @v-g
 
 
   ;; layer changes
