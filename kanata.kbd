@@ -96,7 +96,7 @@
 (deflayermap (vim-normal)
   caps @v-i
   f    (t! tap-hold XX lsft)
-  v    (t! action-shift (layer-switch vim-visual) (multi (macro (unshift lmet rght) S-M-lft) (layer-switch vim-VISUAL-init)))
+  v    (t! action-shift (layer-switch vim-visual) (multi @v-V (layer-switch vim-VISUAL-init)))
 
   ;; motions
   up   up
@@ -145,9 +145,9 @@
   l    (t! visual @v-l)
   b    (t! visual @v-b)
   w    (t! visual @v-w)
-  g    (tap-dance 200 ((t! action-shift XX (multi lmet down)) (t! visual @v-gg)))
-  ;    (t! visual @v-0) ;; aka 0 on my layout w/ spc -> lower layer
-  r    (t! visual @v-$) ;; aka $ on my layout w/ spc -> lower layer
+  g    (tap-dance 200 ((t! action-shift XX @v-vG) (t! visual @v-gg)))
+  ;    @v-v0 ;; aka 0 on my layout w/ spc -> lower layer
+  r    @v-v$ ;; aka $ on my layout w/ spc -> lower layer
 
   c    (multi @v-i bspc)
   i    (t! vim-seq vim-vi)
@@ -163,11 +163,11 @@
   caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
   f    (t! tap-hold XX lsft)
 
-  up   (multi (macro ((unshift lmet rght) S-M-lft S-A-up)) (layer-switch vim-VISUAL))
-  down (multi (macro ((unshift lmet lft) S-M-rght S-A-down)) (layer-switch vim-VISUAL))
-  j    (multi (macro ((unshift lmet lft) S-M-rght S-A-down)) (layer-switch vim-VISUAL))
-  k    (multi (macro ((unshift lmet rght) S-M-lft S-A-up)) (layer-switch vim-VISUAL))
-  g    (tap-dance 200 ((t! action-shift XX (multi lmet down)) (t! visual @v-gg)))
+  up   (multi @v-V-up   (layer-switch vim-VISUAL))
+  down (multi @v-V-down (layer-switch vim-VISUAL))
+  j    (multi @v-V-down (layer-switch vim-VISUAL))
+  k    (multi @v-V-up   (layer-switch vim-VISUAL))
+  g    (tap-dance 200 ((t! action-shift XX @v-vG) (t! visual @v-gg)))
 
   c    (multi @v-i bspc)
 
@@ -181,7 +181,7 @@
   down S-A-down
   j    S-A-down
   k    S-A-up
-  g    (tap-dance 200 ((t! action-shift XX (multi lmet down)) (t! visual @v-gg)))
+  g    (tap-dance 200 ((t! action-shift XX @v-vG) (t! visual @v-gg)))
 
   c    (multi @v-i bspc)
   ___  XX
@@ -197,20 +197,30 @@
   v-l   rght
   v-b   A-lft
   v-w   A-rght
-  v-0   M-lft
-  v-$   M-rght
-  v-I   (t! action-i (unshift lmet lft))
-  v-A   (t! action-i (unshift lmet rght))
-  v-o   (t! action-i (macro M-rght ret))
-  v-O   (t! action-i (macro (unshift lmet lft) ret (unshift up)))
+  v-0   (unshift lmet lft)
+  v-$   (unshift lmet rght)
+  v-I   (t! action-i @v-0)
+  v-A   (t! action-i @v-$)
+  v-o   (t! action-i (macro @v-$ ret))
+  v-O   (t! action-i (macro @v-0 ret (unshift up)))
   v-gg  M-up
   v-G   (unshift lmet down)
   v-c   (t! vim-seq vim-c)
-  v-cc  (t! action-i (macro M-lft C-k))
+  v-cc  (t! action-i (macro @v-0 C-k))
   v-C   (t! action-i (unshift lctl k))
   v-ci  (t! vim-seq vim-ci)
   v-ciw (t! action-i (macro S-A-lft bspc S-A-rght bspc))
+
   v-viw (t! visual (macro A-lft A-rght))
+  v-v0   S-M-lft
+  v-v$   S-M-rght
+  v-vG   S-M-down
+
+  v-V      (macro @v-$ @v-v0)
+  v-Vk     S-A-up
+  v-V-up   (macro @v-$ @v-v0 @v-Vk)
+  v-Vj     S-A-down
+  v-V-down (macro @v-0 @v-v$ @v-Vj)
 
   ;; layer changes
   lwr    (t! tap-layer spc  lower)
