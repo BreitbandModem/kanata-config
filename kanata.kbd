@@ -59,7 +59,7 @@
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
        XX   XX   XX   XX   lrld XX   XX   XX   XX   XX   XX   XX   del
   tab  q    w    e    r    t    y    @u   i    @o   p    XX   XX
-  @v-esc @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    XX   XX
+  @i-esc @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    XX   XX
   XX   \    z    x    c    v    b    n    m    ,    .    /         XX
   @fn  XX   XX   @rsBspc        @lwr           @rsRet    XX
 )
@@ -96,20 +96,20 @@
 (deflayermap (vim-normal)
   caps @v-i
   f    (t! tap-hold XX lsft)
-  v    (t! action-shift (layer-switch vim-visual) (multi @v-V (layer-switch vim-VISUAL-init)))
+  v    @v-v
 
   ;; motions
-  up   up
-  down down
-  lft  lft
-  rght rght
+  up   @v-k
+  down @v-j
+  lft  @v-h
+  rght @v-l
   h    @v-h
-  j    @v-j
+  j    (t! homerow-r @v-j lsft)
   k    @v-k
   l    @v-l
   b    @v-b
   w    @v-w
-  g    (tap-dance 200 ((t! action-shift XX @v-G) @v-gg))
+  g    @v-g
   ;    @v-0 ;; aka 0 on my layout w/ spc -> lower layer
   r    @v-$ ;; aka $ on my layout w/ spc -> lower layer
 
@@ -132,24 +132,24 @@
 )
 
 (deflayermap (vim-visual)
-  caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
+  caps @v-vesc
   f    (t! tap-hold XX lsft)
 
-  up   (t! visual up)
-  down (t! visual down)
-  lft  (t! visual lft)
-  rght (t! visual rght)
+  up   (t! visual @v-k)
+  down (t! visual @v-j)
+  lft  (t! visual @v-h)
+  rght (t! visual @v-l)
   h    (t! visual @v-h)
   j    (t! visual @v-j)
   k    (t! visual @v-k)
   l    (t! visual @v-l)
   b    (t! visual @v-b)
   w    (t! visual @v-w)
-  g    (tap-dance 200 ((t! action-shift XX @v-vG) (t! visual @v-gg)))
+  g    @v-vg
   ;    @v-v0 ;; aka 0 on my layout w/ spc -> lower layer
   r    @v-v$ ;; aka $ on my layout w/ spc -> lower layer
 
-  c    (multi @v-i bspc)
+  c    @v-vc
   i    (t! vim-seq vim-vi)
 
   ___  XX
@@ -159,40 +159,45 @@
   ___ XX
 )
 
+;; Depending on if you select from the current line upwards ord downwards,
+;; the cursor needs to be placed either at the end or the beginning of the current line.
+;; The init layer is used to determine the direction of the selection based on th first motion.
 (deflayermap (vim-VISUAL-init)
-  caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
+  caps @v-vesc ;; right click to deselect text
   f    (t! tap-hold XX lsft)
 
   up   (multi @v-V-up   (layer-switch vim-VISUAL))
   down (multi @v-V-down (layer-switch vim-VISUAL))
   j    (multi @v-V-down (layer-switch vim-VISUAL))
   k    (multi @v-V-up   (layer-switch vim-VISUAL))
-  g    (tap-dance 200 ((t! action-shift XX @v-vG) (t! visual @v-gg)))
+  g    @v-vg
 
-  c    (multi @v-i bspc)
+  c    @v-vc
 
   ___  XX
 )
 (deflayermap (vim-VISUAL)
-  caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
+  caps @v-vesc
   f    (t! tap-hold XX lsft)
 
-  up   S-A-up
-  down S-A-down
-  j    S-A-down
-  k    S-A-up
-  g    (tap-dance 200 ((t! action-shift XX @v-vG) (t! visual @v-gg)))
+  up   @v-Vk
+  down @v-Vj
+  j    @v-Vj
+  k    @v-Vk
+  g    @v-vg
 
-  c    (multi @v-i bspc)
+  c    @v-vc
+
   ___  XX
 )
 
 (defalias
   ;; vim
-  v-esc (tap-dance 200 (esc (multi caps (layer-switch vim-normal))))
+  i-esc (tap-dance 200 (esc (multi caps (layer-switch vim-normal))))
+  v-vesc (multi (layer-switch vim-normal) rght) ;; move right to deselect text
   v-i   (multi caps (layer-switch base))
   v-h   lft
-  v-j   (t! homerow-r down lsft)
+  v-j   down
   v-k   up
   v-l   rght
   v-b   A-lft
@@ -203,24 +208,29 @@
   v-A   (t! action-i @v-$)
   v-o   (t! action-i (macro @v-$ ret))
   v-O   (t! action-i (macro @v-0 ret (unshift up)))
-  v-gg  M-up
   v-G   (unshift lmet down)
+  v-gg  M-up
+  v-g   (tap-dance 200 ((t! action-shift XX @v-G) @v-gg))
   v-c   (t! vim-seq vim-c)
   v-cc  (t! action-i (macro @v-0 C-k))
   v-C   (t! action-i (unshift lctl k))
   v-ci  (t! vim-seq vim-ci)
   v-ciw (t! action-i (macro S-A-lft bspc S-A-rght bspc))
 
-  v-viw (t! visual (macro A-lft A-rght))
+  v-viw  (t! visual (macro A-lft A-rght))
   v-v0   S-M-lft
   v-v$   S-M-rght
   v-vG   S-M-down
+  v-vg   (tap-dance 200 ((t! action-shift XX @v-vG) (t! visual @v-gg)))
+  v-vc   (t! action-i bspc)
 
   v-V      (macro @v-$ @v-v0)
+  v-v      (t! action-shift (layer-switch vim-visual) (multi @v-V (layer-switch vim-VISUAL-init)))
   v-Vk     S-A-up
   v-V-up   (macro @v-$ @v-v0 @v-Vk)
   v-Vj     S-A-down
   v-V-down (macro @v-0 @v-v$ @v-Vj)
+
 
   ;; layer changes
   lwr    (t! tap-layer spc  lower)
