@@ -37,6 +37,9 @@
 (deftemplate action-shift (action shift-action)
   (fork $action $shift-action (rsft lsft))
 )
+(deftemplate action-ctl (action ctl-action)
+  (fork $action $ctl-action (lctl rctl))
+)
 (deftemplate vim-seq (layer)
   (one-shot-press 300 (layer-toggle $layer))
 )
@@ -93,7 +96,6 @@
 ;; todo: add motions 0,$
 ;; todo: add yank operations
 ;; todo: add d,dd,x
-;; todo: add undo,redo
 ;; todo: add cw, cb
 (deflayermap (vim-normal)
   caps @n-i
@@ -112,8 +114,9 @@
   b    @n-b
   w    @n-w
   g    @n-g
-  ;    @n-0 ;; aka 0 on my layout w/ spc -> lower layer
-  r    @n-$ ;; aka $ on my layout w/ spc -> lower layer
+  ;    (t! tap-hold   @n-0 rctl) ;; aka 0 and ctl on my lower layer
+  r    (t! action-ctl @n-$ @n-r) ;; aka $ on my lower layer
+  u    @n-u
 
   ;; insert
   i    (t! action-shift @n-i @n-I)
@@ -219,6 +222,8 @@
   n-C   (t! action-i (unshift lctl k))
   n-ci  (t! vim-seq vim-ci)
   n-ciw (t! action-i (macro @n-b S-A-rght bspc)) ;; aka @v-iw
+  n-u   (unmod rmet z)
+  n-r   (unmod rsft rmet z)
 
   v-c   (t! action-i bspc)
   v-h   (t! visual @n-h)
