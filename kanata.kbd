@@ -40,6 +40,9 @@
 (deftemplate vim-seq (layer)
   (one-shot-press 300 (layer-toggle $layer))
 )
+(deftemplate visual (action)
+  (multi lsft $action)
+)
 
 (defvar)
 
@@ -93,41 +96,51 @@
 (deflayermap (vim-normal)
   caps @v-i
 
-  up up
+  up   up
   down down
-  lft lft
+  lft  lft
   rght rght
-  h @v-h
-  j @v-j
-  k @v-k
-  l @v-l
-  f (t! tap-hold XX lsft)
+  h    @v-h
+  j    @v-j
+  k    @v-k
+  l    @v-l
+  f    (t! tap-hold XX lsft)
 
-  i (t! action-shift @v-i @v-I)
-  a (t! action-shift @v-i @v-A)
-  o (t! action-shift @v-o @v-O)
-  b  @v-b
-  w  @v-w
-  g (tap-dance 200 ((t! action-shift XX @v-G) @v-gg))
-  c (t! action-shift @v-c @v-C)
-  v (layer-switch vim-visual)
+  i    (t! action-shift @v-i @v-I)
+  a    (t! action-shift @v-i @v-A)
+  o    (t! action-shift @v-o @v-O)
+  b    @v-b
+  w    @v-w
+  g    (tap-dance 200 ((t! action-shift XX @v-G) @v-gg))
+  c    (t! action-shift @v-c @v-C)
+  v    (layer-switch vim-visual)
 
-  ___ XX
+  ___  XX
 )
 (deflayermap (vim-c)
-  c @v-cc
-  i @v-ci
+  c   @v-cc
+  i   @v-ci
   ___ XX
 )
 (deflayermap (vim-ci)
-  w @v-ciw
+  w   @v-ciw
   ___ XX
 )
 (deflayermap (vim-visual)
   caps (multi (layer-switch vim-normal) rght) ;; right click to deselect text
-  b (multi lsft @v-b)
-  w (multi lsft @v-w)
-  ___ XX
+
+  up   (t! visual up)
+  down (t! visual down)
+  lft  (t! visual lft)
+  rght (t! visual rght)
+  h    (t! visual @v-h)
+  j    (t! visual @v-j)
+  k    (t! visual @v-k)
+  l    (t! visual @v-l)
+  b    (t! visual @v-b)
+  w    (t! visual @v-w)
+
+  ___  XX
 )
 
 (defalias
@@ -182,7 +195,7 @@
 
   ;; Umlauts
   umlaut (unshift lalt u) ;; when used in a macro, wait for 1ms before pressing the vocal
-  u (tap-hold 200 300 u (macro @umlaut 1 u))
-  o (tap-hold 200 300 o (macro @umlaut 1 o))
-  ae (macro @umlaut 1 a)
+  u      (tap-hold 200 300 u (macro @umlaut 1 u))
+  o      (tap-hold 200 300 o (macro @umlaut 1 o))
+  ae     (macro @umlaut 1 a)
 )
