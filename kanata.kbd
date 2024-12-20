@@ -64,7 +64,7 @@
   tab  q    w   @e    r    t    y    @u   i    @o   p    XX   XX
   esc  @a   @s   @d   @f   g    h    @j   @k   @l   @;   '    XX   XX
   XX   \    z    x    c    v    b    n    m    ,    .    /         XX
-  @fn  XX   XX   @rsBspc        @lwr           @rsRet    XX
+  @fn  XX   @nav @rsBspc        @lwr           @rsRet    @nav
 )
 
 (deflayer lower
@@ -83,6 +83,13 @@
   _    @ae  _    _    _    _    _    @[   @]   _    _    _    _    ret
   _    _    _    _    _    _    _    S-[  S-]  _    _    _         rsft
   _    _    _    bspc           spc            ret       _
+)
+
+(deflayermap (nav)
+  h lft
+  j down
+  k up
+  l rght
 )
 
 (deflayermap (fn-layer)
@@ -256,6 +263,7 @@
   lwr    (t! tap-layer spc  lower)
   rsRet  (t! tap-layer ret  raise)
   rsBspc (t! tap-layer bspc raise)
+  nav    (t! tap-layer fn   nav)
   fn     (t! tap-layer fn   fn-layer)
 
   ;; homerow mods
