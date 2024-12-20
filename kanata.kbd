@@ -9,7 +9,7 @@
   ;;                tap-time hold-time                    tap-keys
   (tap-hold-release-keys 200 150 $tap-action $hold-action (
       q w e r t
-      a s d f g
+      ;; a s d f g
       z x c v b
     )
   )
@@ -18,7 +18,7 @@
   ;;                tap-time hold-time                    tap-keys
   (tap-hold-release-keys 200 150 $tap-action $hold-action (
       y u i o p
-      h j k l ;
+      ;; h j k l ;
       n m , . /
     )
   )
