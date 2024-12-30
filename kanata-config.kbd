@@ -1,0 +1,71 @@
+(defcfg
+  process-unmapped-keys yes
+)
+
+;; Note: consider using different time values for your different fingers.
+;; For example, your pinkies might be slower to release keys and index
+;; fingers faster.
+(deftemplate homerow-l (tap-action hold-action)
+  ;;                tap-time hold-time                    tap-keys
+  (tap-hold-release-keys 200 150 $tap-action $hold-action (
+      q w e r t
+      ;; a s d f g
+      z x c v b
+    )
+  )
+)
+(deftemplate homerow-r (tap-action hold-action)
+  ;;                tap-time hold-time                    tap-keys
+  (tap-hold-release-keys 200 150 $tap-action $hold-action (
+      y u i o p
+      ;; h j k l ;
+      n m , . /
+    )
+  )
+)
+(deftemplate tap-hold (tap-action hold-action)
+  ;;   tap-time hold-time
+  (tap-hold 200 150 $tap-action $hold-action)
+)
+(deftemplate tap-layer (tap-action layer)
+  ;;   tap-time hold-time
+  (tap-hold 200 150 $tap-action (layer-while-held $layer))
+)
+
+(defalias
+  ;; layer changes
+  lwr    (t! tap-layer spc  lower)
+  rsRet  (t! tap-layer ret  raise)
+  rsBspc (t! tap-layer bspc raise)
+  nav    (t! tap-layer lalt nav)
+  fn     (t! tap-layer fn   fn-layer)
+
+  ;; homerow mods
+  a (t! homerow-l a lctl)
+  s (t! homerow-l s lalt)
+  d (t! homerow-l d lmet)
+  f (t! homerow-l f lsft)
+  j (t! homerow-r j rsft)
+  k (t! homerow-r k rmet)
+  l (t! homerow-r l ralt)
+  ; (t! homerow-r ; rctl)
+
+  1 (t! tap-hold 1 lctl)
+  2 (t! tap-hold 2 lalt)
+  3 (t! tap-hold 3 lmet)
+  4 (t! tap-hold 4 lsft)
+  7 (t! tap-hold 7 rsft)
+  8 (t! tap-hold 8 rmet)
+  9 (t! tap-hold 9 ralt)
+  0 (t! tap-hold 0 rctl)
+
+  [ (t! tap-hold [ rsft)
+  ] (t! tap-hold ] rmet)
+
+  ;; Umlauts
+  umlaut (unshift lalt u)
+  u      (tap-hold 200 300 u (macro @umlaut 1 u)) ;; for the u we have to add a minimal delay
+  o      (tap-hold 200 300 o (macro @umlaut o))
+  ae     (macro @umlaut a)
+  e      (tap-hold 200 300 e S-A-2 )
+)

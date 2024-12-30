@@ -1,0 +1,175 @@
+(deftemplate action-i (action)
+  (multi $action @n-i)
+)
+(deftemplate action-shift (action shift-action)
+  (fork $action $shift-action (rsft lsft))
+)
+(deftemplate action-ctl (action ctl-action)
+  (fork $action $ctl-action (lctl rctl))
+)
+(deftemplate vim-seq (layer)
+  (one-shot-press 300 (layer-toggle $layer))
+)
+(deftemplate visual (action)
+  (multi lsft $action)
+)
+
+;; vim motions
+;; todo: add yank operations
+;; todo: add cw, cb
+(deflayermap (vim-normal)
+  caps @n-i
+  f    (t! tap-hold XX lsft)
+  v    @n-v
+
+  ;; motions
+  up   @n-k
+  down @n-j
+  lft  @n-h
+  rght @n-l
+  h    @n-h
+  j    (t! homerow-r @n-j lsft)
+  k    @n-k
+  l    @n-l
+  b    @n-b
+  w    @n-w
+  g    @n-g
+  ;    (t! tap-hold   @n-0 rctl) ;; aka 0 and ctl on my lower layer
+  r    (t! action-ctl @n-$ @n-r) ;; aka $ on my lower layer
+  u    @n-u
+  x    (t! action-shift @n-x @n-X)
+  d    @n-d
+
+  ;; insert
+  i    (t! action-shift @n-i @n-I)
+  a    (t! action-shift @n-i @n-A)
+  o    (t! action-shift @n-o @n-O)
+  c    (t! action-shift @n-c @n-C)
+
+  ___  XX
+)
+(deflayermap (vim-c)
+  c   @n-cc
+  i   @n-ci
+  ___ XX
+)
+(deflayermap (vim-ci)
+  w   @n-ciw
+  ___ XX
+)
+
+(deflayermap (vim-visual)
+  caps @v-esc
+  f    (t! tap-hold XX lsft)
+
+  up   @v-k
+  down @v-j
+  lft  @v-h
+  rght @v-l
+  h    @v-h
+  j    @v-j
+  k    @v-k
+  l    @v-l
+  b    @v-b
+  w    @v-w
+  g    @v-g
+  ;    @v-0 ;; aka 0 on my layout w/ spc -> lower layer
+  r    @v-$ ;; aka $ on my layout w/ spc -> lower layer
+
+  c    @v-c
+  i    (t! vim-seq vim-vi)
+
+  ___  XX
+)
+(deflayermap (vim-vi)
+  w   @v-iw
+  ___ XX
+)
+;; Depending on if you select from the current line upwards ord downwards,
+;; the cursor needs to be placed either at the end or the beginning of the current line.
+;; The init layer is used to determine the direction of the selection based on th first motion.
+(deflayermap (vim-VISUAL-init)
+  caps @V-esc
+  f    (t! tap-hold XX lsft)
+
+  up   (multi @V-Vk (layer-switch vim-VISUAL))
+  down (multi @V-Vj (layer-switch vim-VISUAL))
+  j    (multi @V-Vj (layer-switch vim-VISUAL))
+  k    (multi @V-Vk (layer-switch vim-VISUAL))
+  g    @V-g
+
+  c    @V-c
+
+  ___  XX
+)
+(deflayermap (vim-VISUAL)
+  caps @V-esc
+  f    (t! tap-hold XX lsft)
+
+  up   @V-k
+  down @V-j
+  j    @V-j
+  k    @V-k
+  g    @V-g
+
+  c    @V-c
+
+  ___  XX
+)
+
+
+(defalias
+  ;; Vim aliases start with i, n, v, or V to indicate the mode (layer) they are designed for (insert, normal, visual, visual-line).
+  i-esc (tap-dance 200 (esc (multi caps (layer-switch vim-normal))))
+  v-esc (multi (layer-switch vim-normal) rght) ;; move right to deselect text
+  V-esc @v-esc
+  n-i   (multi caps (layer-switch insert))
+  n-h   lft
+  n-j   down
+  n-k   up
+  n-l   rght
+  n-b   A-lft
+  n-w   A-rght
+  n-0   (unshift lmet lft)
+  n-$   (unshift lmet rght)
+  n-I   (t! action-i @n-0)
+  n-A   (t! action-i @n-$)
+  n-o   (t! action-i (macro @n-$ ret))
+  n-O   (t! action-i (macro @n-0 ret (unshift up)))
+  n-G   (unshift lmet down)
+  n-gg  M-up
+  n-g   (tap-dance 200 ((t! action-shift XX @n-G) @n-gg))
+  n-x   del
+  n-X   bspc
+  n-D   (unshift lctl k)
+  n-dd  (macro @n-0 @n-D)
+  n-d   (tap-dance 200 ((t! action-shift XX @n-D) @n-dd))
+  n-c   (t! vim-seq vim-c)
+  n-cc  (t! action-i @n-dd)
+  n-C   (t! action-i @n-D)
+  n-ci  (t! vim-seq vim-ci)
+  n-ciw (t! action-i (macro @n-b S-A-rght @n-X)) ;; aka @v-iw
+  n-u   (unmod rmet z)
+  n-r   (unmod rsft rmet z)
+
+  v-c   (t! action-i @n-X)
+  v-h   (t! visual @n-h)
+  v-j   (t! visual @n-j)
+  v-k   (t! visual @n-k)
+  v-l   (t! visual @n-l)
+  v-b   (t! visual @n-b)
+  v-w   (t! visual @n-w)
+  v-iw  (macro @n-b S-A-rght) ;; aka @v-w
+  v-0   S-M-lft
+  v-$   S-M-rght
+  v-G   S-M-down
+  v-g   (tap-dance 200 ((t! action-shift XX @v-G) (t! visual @n-gg)))
+  n-v   (t! action-shift (layer-switch vim-visual) (multi (macro @n-0 @v-$) (layer-switch vim-VISUAL-init)))
+
+  V-c   @v-c
+  V-k   S-A-up
+  V-Vk  (macro @n-$ @v-0 @V-k)
+  V-j   S-A-down
+  V-Vj  (macro @n-0 @v-$ @V-j)
+  V-g   @v-g
+)
