@@ -10,10 +10,12 @@ Setup:
 - Install karabiner-elements
   - `brew install --cask karabiner-elements`
 - Link the kanata.kbd file to the karabiner-elements config directory
-  - `ln -s /Users/<user>/git/kanata-config/kanata.kbd /Users/<user>/Library/Application\ Support/kanata/`
-  - `ln -s /Users/<user>/git/kanata-config/kanata-config.kbd /Users/<user>/Library/Application\ Support/kanata/`
-  - `ln -s /Users/<user>/git/kanata-config/kanata-vim.kbd /Users/<user>/Library/Application\ Support/kanata/`
-  - `ln -s /Users/<user>/git/kanata-config/kanata-13.kbd /Users/<user>/Library/Application\ Support/kanata/`
+```
+ln -s /Users/<user>/git/kanata-config/kanata.kbd        /Users/<user>/Library/Application\ Support/kanata/; \
+ln -s /Users/<user>/git/kanata-config/kanata-config.kbd /Users/<user>/Library/Application\ Support/kanata/; \
+ln -s /Users/<user>/git/kanata-config/kanata-vim.kbd    /Users/<user>/Library/Application\ Support/kanata/; \
+ln -s /Users/<user>/git/kanata-config/kanata-15.kbd     /Users/<user>/Library/Application\ Support/kanata/;
+```
 - Set no pwd for sudo
   - `sudo visudo -f /private/etc/sudoers.d/kanata`
   - `<user> ALL=(root) NOPASSWD: /Users/<user>/.local/bin/kanata`
