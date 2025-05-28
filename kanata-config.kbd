@@ -1,5 +1,6 @@
 (defcfg
   process-unmapped-keys yes
+  macos-dev-names-include ("Apple Internal Keyboard / Trackpad")
 )
 
 ;; Note: consider using different time values for your different fingers.
@@ -37,7 +38,7 @@
   lwr    (t! tap-layer spc  lower)
   rsRet  (t! tap-layer ret  raise)
   rsBspc (t! tap-layer bspc raise)
-  nav    (t! tap-layer lalt nav)
+  nav    (t! tap-layer f19  nav)
   fn     (t! tap-layer fn   fn-layer)
 
   ;; homerow mods
@@ -58,9 +59,6 @@
   8 (t! tap-hold 8 rmet)
   9 (t! tap-hold 9 ralt)
   0 (t! tap-hold 0 rctl)
-
-  [ (t! tap-hold [ rsft)
-  ] (t! tap-hold ] rmet)
 
   ;; Umlauts
   umlaut (unshift lalt u)

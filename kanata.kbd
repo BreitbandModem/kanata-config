@@ -1,3 +1,4 @@
+;; > At the time of writing, includes can only be placed at the top level.
 (include kanata-config.kbd)
-(include kanata-13.kbd)
+(include kanata-15.kbd)
 (include kanata-vim.kbd)
