@@ -1,6 +1,7 @@
 (defcfg
   process-unmapped-keys yes
   macos-dev-names-include ("Apple Internal Keyboard / Trackpad")
+  linux-dev /dev/input/by-path/platform-39b10c000.spi-cs-0-event-kbd
 )
 
 ;; Note: consider using different time values for your different fingers.
